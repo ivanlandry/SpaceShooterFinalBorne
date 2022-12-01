@@ -18,7 +18,6 @@ public class LireBouton : MonoBehaviour
 
     public void LireTexte()
     {
-        //Debug.Log(this.GetComponentInChildren<TMP_Text>().text);
         if (_highScoreTable != null)
         {
             _highScoreTable.AjouterLettre(this.GetComponentInChildren<TMP_Text>().text);
