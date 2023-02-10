@@ -13,15 +13,24 @@ public class HighScoreTable : MonoBehaviour
     private Transform _entryTemplate;
     private List<Transform> _highScoreEntryTransformList;
     [SerializeField] private Button _button = default;
+    [SerializeField] private Button _buttonPass = default;
     [SerializeField] private GameObject _buttonRetour = default;
+    [SerializeField] private GameObject _buttonReset = default;
     [SerializeField] private TMP_Text _text = default;
+    [SerializeField] private TMP_Text _textEtoiles = default;
     [SerializeField] private GameObject _saisieNom = default;
+    [SerializeField] private GameObject _resetScore = default;
     [SerializeField] private GameObject _txtErreur = default;
+    [SerializeField] private GameObject _txtErreurPass = default;
+    [SerializeField] private GameObject _txtReussi = default;
     [SerializeField] private GameObject _imageVaisseau = default;
     [SerializeField] private GameObject _lettreDepart = default;
+    [SerializeField] private GameObject _lettreDepart2 = default;
 
     private HighScores highScores;
     private string _texteTemp = "";
+    private string _textePass = "";
+    private string _texteEtoiles = "";
 
     private void Awake()
     {
@@ -36,9 +45,9 @@ public class HighScoreTable : MonoBehaviour
                 if (PlayerPrefs.GetInt("Score") > highScores._highScoreEntryList[9].score)
                 {
                     _saisieNom.SetActive(true);
-                    
                     _imageVaisseau.SetActive(false);
                     _buttonRetour.SetActive(false);
+                    _buttonReset.SetActive(false);
                     Button btn = _button.GetComponent<Button>();
                     btn.onClick.AddListener(EnregistrerNom);
                     StartCoroutine(DelaiSaisie());
@@ -54,6 +63,7 @@ public class HighScoreTable : MonoBehaviour
                 _saisieNom.SetActive(true);
                 _imageVaisseau.SetActive(false);
                 _buttonRetour.SetActive(false);
+                _buttonReset.SetActive(false);
                 Button btn = _button.GetComponent<Button>();
                 btn.onClick.AddListener(EnregistrerNom);
                 StartCoroutine(DelaiSaisie());
@@ -93,22 +103,48 @@ public class HighScoreTable : MonoBehaviour
     
     public void AjouterLettre(string lettre)
     {
-        if (lettre == "Espace")
+        if (_saisieNom.activeSelf)
         {
-            _texteTemp += " ";
-        }
-        else if (lettre == "←")
-        {
-            _texteTemp = _texteTemp.Remove(_texteTemp.Length - 1);
+            if (lettre == "Espace")
+            {
+                _texteTemp += " ";
+            }
+            else if (lettre == "←")
+            {
+                _texteTemp = _texteTemp.Remove(_texteTemp.Length - 1);
+            }
+            else
+            {
+                if (_texteTemp.Length <= 10)
+                {
+                    _texteTemp += lettre;
+                }
+            }
+            _text.text = _texteTemp;
         }
         else
         {
-            if (_texteTemp.Length <= 10)
+            if (lettre == "Espace")
             {
-                _texteTemp += lettre;
+                _textePass += " ";
+                _texteEtoiles += "*";
             }
+            else if (lettre == "←")
+            {
+                _textePass = _textePass.Remove(_textePass.Length - 1);
+                _texteEtoiles = _texteEtoiles.Remove(_textePass.Length - 1);
+            }
+            else
+            {
+                if (_textePass.Length <= 10)
+                {
+                    _textePass += lettre;
+                    _texteEtoiles += "*";
+                }
+            }
+            _textEtoiles.text = _texteEtoiles;
+            Debug.Log(_textePass);
         }
-        _text.text = _texteTemp;
     }
 
     private void GenererTableHighScore()
@@ -117,7 +153,7 @@ public class HighScoreTable : MonoBehaviour
         _entryTemplate = _entryContainer.Find("HighScoreEntryTemplate");
 
         _entryTemplate.gameObject.SetActive(false);
-        
+
         //AddHighScoreEntry(14500, "Dave");  //Teste avec un ajout manuel
         //AddHighScoreEntry(3400, "Alex");
         //AddHighScoreEntry(700, "Josée");
@@ -135,7 +171,7 @@ public class HighScoreTable : MonoBehaviour
 
         if (highScores == null)
         {
-            AddHighScoreEntry(5500, "Dave");
+            AddHighScoreEntry(100, "CEGEPTR");
         }
 
         // trier(ordonner) la liste des highscores
@@ -169,6 +205,33 @@ public class HighScoreTable : MonoBehaviour
         
 
     }
+    
+    private void ValiderPass()
+    {
+        if (_textePass == "SIM-X")
+        {
+            _txtErreurPass.SetActive(false);
+            _txtReussi.SetActive(true);
+            _textePass = "";
+            _texteEtoiles = "";
+            _textEtoiles.text = "";
+            Debug.Log("Bravo **************");
+            PlayerPrefs.DeleteKey("highScoreTable");
+            GenererTableHighScore();
+            SceneManager.LoadScene(0);
+        }
+        else
+        {
+            _txtErreurPass.SetActive(true);
+            _txtReussi.SetActive(false);
+            _textePass = "";
+            _texteEtoiles = "";
+            _textEtoiles.text = "";
+            Debug.Log("NOPE !!!!!!!!!!!!!!");
+        }
+        
+    }
+    
     private void EnregistrerNom()
     {
 
@@ -186,6 +249,7 @@ public class HighScoreTable : MonoBehaviour
             _saisieNom.SetActive(false);
             _imageVaisseau.SetActive(true);
             _buttonRetour.SetActive(true);
+            _buttonReset.SetActive(true);
             EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(_buttonRetour);
             _txtErreur.SetActive(false);
@@ -298,11 +362,29 @@ public class HighScoreTable : MonoBehaviour
         public string name;
     }
 
+    public void ResetScores()
+    {
+        _resetScore.SetActive(true);
+        _textePass = "";
+        _texteEtoiles = "";
+        _textEtoiles.text = "";
+        _imageVaisseau.SetActive(false);
+        _buttonRetour.SetActive(false);
+        _buttonReset.SetActive(false);
+        Button btn = _buttonPass.GetComponent<Button>();
+        btn.onClick.AddListener(ValiderPass);
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(_lettreDepart2);
+        StartCoroutine(DelaiSaisie());
+    }
+    
     public void Annuler()
     {
         _saisieNom.SetActive(false);
+        _resetScore.SetActive(false);
         _imageVaisseau.SetActive(true);
         _buttonRetour.SetActive(true);
+        _buttonReset.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(_buttonRetour);
         _txtErreur.SetActive(false);
