@@ -215,7 +215,6 @@ public class HighScoreTable : MonoBehaviour
             _textePass = "";
             _texteEtoiles = "";
             _textEtoiles.text = "";
-            Debug.Log("Bravo **************");
             PlayerPrefs.DeleteKey("highScoreTable");
             GenererTableHighScore();
             SceneManager.LoadScene(0);
@@ -227,7 +226,6 @@ public class HighScoreTable : MonoBehaviour
             _textePass = "";
             _texteEtoiles = "";
             _textEtoiles.text = "";
-            Debug.Log("NOPE !!!!!!!!!!!!!!");
         }
         
     }
