@@ -143,7 +143,6 @@ public class HighScoreTable : MonoBehaviour
                 }
             }
             _textEtoiles.text = _texteEtoiles;
-            Debug.Log(_textePass);
         }
     }
 
