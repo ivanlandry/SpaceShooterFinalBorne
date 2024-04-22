@@ -21,6 +21,7 @@ public class GestionScene : MonoBehaviour
         // Cursor.visible = false;
         int compteur = PlayerPrefs.GetInt("compteur");
         _txtCompteur.text = "Nombre de parties : " + compteur.ToString();
+        // Sélectionne le bouton démarrer au chargement de la scène
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(_startButton);
     }
@@ -41,6 +42,7 @@ public class GestionScene : MonoBehaviour
         _boutonRetour.SetActive(true);
         _boutonDemarrer.SetActive(false);
         _boutonScore.SetActive(false);
+        // Sélectionne le bouton de retour
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(_boutonRetour);
         StartCoroutine(DelaiRetour());
@@ -59,6 +61,7 @@ public class GestionScene : MonoBehaviour
         _boutonRetour.SetActive(false);
         _boutonDemarrer.SetActive(true);
         _boutonScore.SetActive(true);
+        // Sélectionne le bouton de retour
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(_boutonDemarrer);
     }
